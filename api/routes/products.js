@@ -22,7 +22,11 @@ router.delete('/:id', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
-	res.status(201).json({ message: 'products post request' });
+	const product = {
+		name: req.body.name,
+		price: req.body.price
+	};
+	res.status(201).json({ message: product });
 });
 
 module.exports = router;
