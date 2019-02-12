@@ -6,14 +6,6 @@ router.get('/', (req, res, next) => {
 	res.status(200).json({ message: 'Orders were fetched' });
 });
 
-router.post('/', (req, res, next) => {
-	const order = {
-		product: req.body.productId,
-		quantity: req.body.quantity
-	};
-	res.status(201).json({ message: order });
-});
-
 router.get('/:id', (req, res, next) => {
 	const id = req.params.id;
 	res.status(200).json({ message: `Order Id: ${id}` });
@@ -28,5 +20,14 @@ router.delete('/:id', (req, res, next) => {
 	const id = req.params.id;
 	res.status(200).json({ message: `Order Id: ${id} deleted` });
 });
+
+router.post('/', (req, res, next) => {
+	const order = {
+		product: req.body.productId,
+		quantity: req.body.quantity
+	};
+	res.status(201).json({ message: order });
+});
+
 
 module.exports = router;
