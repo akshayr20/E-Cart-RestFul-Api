@@ -16,6 +16,7 @@ app.use((req, res, next) => {
 		res.header('Access-Control-Allow-Method', 'PUT,  POST, PATCH, DELETE, GET');
 		return res.status(200).json({});
 	}
+	next();
 });
 
 const productsRoute = require('./api/routes/products');
