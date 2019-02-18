@@ -23,8 +23,8 @@ app.use((req, res, next) => {
 	next();
 });
 
-const productsRoute = require('./api/routes/products');
-const ordersRoute = require('./api/routes/orders');
+const productsRoute = require('./api/products');
+const ordersRoute = require('./api/orders');
 
 app.use('/products', productsRoute);
 app.use('/orders', ordersRoute);
