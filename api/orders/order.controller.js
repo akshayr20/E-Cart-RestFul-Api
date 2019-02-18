@@ -3,8 +3,23 @@ const mongoose = require('mongoose');
 
 module.exports.getAllOrders = async (req, res) => {
 	try {
-		const Orders = await Order.find();
-		res.status(200).json(Orders);
+		const orders = await Order.find().select('product quantity _id');
+		const response = {
+			count: orders.length,
+			orders: orders.map(order => {
+				return {
+					_id: order._id,
+					product: order.product,
+					quantity: order.quantity,
+					request: {
+						type: 'GET',
+						description: 'PRODUCT_INFO',
+						url: `http://localhost:3000/products/${order.product}`
+					}
+				};
+			})
+		};
+		res.status(200).json(response);
 	} catch (error) {
 		res.status(500).json(error);
 	}
@@ -13,9 +28,19 @@ module.exports.getAllOrders = async (req, res) => {
 module.exports.getOrderById = async (req, res) => {
 	try {
 		const id = req.params.id;
-		const order = await Order.findById(id);
+		const order = await Order.findById(id).select('product quantity _id');
 		if (order) {
-			res.status(200).json(order);
+			const response = {
+				_id: order._id,
+				product: order.product,
+				quantity: order.quantity,
+				request: {
+					type: 'GET',
+					description: 'PRODUCT_INFO',
+					url: `http://localhost:3000/products/${order.product}`
+				}
+			};
+			res.status(200).json(response);
 		} else {
 			res.status(404).json({ errorMessage: 'No Order found from the given Id' });
 		}
@@ -32,7 +57,15 @@ module.exports.createOrder = async (req, res) => {
 			quantity: req.body.quantity
 		});
 		const result = await order.save();
-		res.status(200).json(result);
+		const response = {
+			message: 'ORDER_CREATED',
+			request: {
+				type: 'GET',
+				description: 'ORDER_INFO',
+				url: `http://localhost:3000/orders/${result._id}`
+			}
+		};
+		res.status(200).json(response);
 	} catch (error) {
 		res.status(500).json(error);
 	}
@@ -47,7 +80,15 @@ module.exports.updateOrderById = async (req, res) => {
 			}
 		};
 		const result = await Order.update({ _id: id }, updatedOrder);
-		res.status(200).json(result);
+		const response = {
+			message: 'ORDER_UPDATED',
+			request: {
+				type: 'GET',
+				description: 'ORDER_INFO',
+				url: `http://localhost:3000/orders/${result._id}`
+			}
+		};
+		res.status(200).json(response);
 	} catch (error) {
 		res.status(500).json(error);
 	}
@@ -56,8 +97,16 @@ module.exports.updateOrderById = async (req, res) => {
 module.exports.deleteOrderById = async (req, res) => {
 	try {
 		const id = req.params.id;
-		const order = await Order.remove({ _id: id });
-		res.status(200).json(order);
+        const order = await Order.remove({ _id: id });
+        const response = {
+            message: 'ORDER_DELETED',
+            request: {
+				type: 'GET',
+				description: 'ALL_ORDER',
+				url: `http://localhost:3000/orders`
+			}
+        }
+		res.status(200).json(response);
 	} catch (error) {
 		res.status(500).json(error);
 	}
