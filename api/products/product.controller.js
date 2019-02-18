@@ -3,18 +3,21 @@ const mongoose = require('mongoose');
 
 module.exports.getAllProducts = async (req, res) => {
 	try {
-		const product = await Product.find().select('name price _id');
+		const products = await Product.find().select('name price _id');
+		if (!products.length) {
+			return res.status(404).json({ errorMessage: 'NO_PRODUCT_FOUND' });
+		}
 		const response = {
-			count: product.length,
-			products: product.map(doc => {
+			count: products.length,
+			products: products.map(product => {
 				return {
-					id: doc._id,
-					name: doc.name,
-					price: doc.price,
+					id: product._id,
+					name: product.name,
+					price: product.price,
 					request: {
 						type: 'GET',
 						description: 'PRODUCT_INFO',
-						url: `http://localhost:3000/products/${doc._id}`
+						url: `http://localhost:3000/products/${product._id}`
 					}
 				};
 			})
@@ -29,19 +32,20 @@ module.exports.getProductById = async (req, res) => {
 	try {
 		const id = req.params.id;
 		const product = await Product.findById(id).select('name price');
+		if (!product) {
+			return res.status(404).json({ errorMessage: 'NO_PRODUCT_FOUND' });
+		}
 		const response = {
-			product,
+			id: product._id,
+			name: product.name,
+			price: product.price,
 			request: {
 				type: 'GET',
 				description: 'GET_ALL_PRODUCTS',
 				url: `http://localhost:3000/products`
 			}
 		};
-		if (product) {
-			res.status(200).json(response);
-		} else {
-			res.status(404).json({ errorMessage: 'NO_PRODUCT_FOUND' });
-		}
+		res.status(200).json(response);
 	} catch (error) {
 		res.status(500).json({ error });
 	}
