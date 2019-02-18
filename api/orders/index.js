@@ -2,16 +2,18 @@ const express = require('express');
 
 const router = express.Router();
 
+const checkAuth = require('../../authorization/check-auth');
+
 const { getAllOrders, getOrderById, createOrder, updateOrderById, deleteOrderById } = require('./order.controller');
 
-router.get('/', getAllOrders);
+router.get('/', checkAuth, getAllOrders);
 
-router.get('/:id', getOrderById);
+router.get('/:id', checkAuth, getOrderById);
 
-router.post('/', createOrder);
+router.post('/', checkAuth, createOrder);
 
-router.patch('/:id', updateOrderById);
+router.patch('/:id', checkAuth, updateOrderById);
 
-router.delete('/:id', deleteOrderById);
+router.delete('/:id', checkAuth, deleteOrderById);
 
 module.exports = router;

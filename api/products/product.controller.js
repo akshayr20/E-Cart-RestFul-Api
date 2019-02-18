@@ -55,6 +55,7 @@ module.exports.getProductById = async (req, res) => {
 
 module.exports.createProduct = async (req, res) => {
 	try {
+		console.log(req.body);
 		const product = new Product({
 			_id: new mongoose.Types.ObjectId(),
 			name: req.body.name,

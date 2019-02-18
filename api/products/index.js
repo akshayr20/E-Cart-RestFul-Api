@@ -4,6 +4,8 @@ const router = express.Router();
 
 const multer = require('multer');
 
+const checkAuth = require('../../authorization/check-auth');
+
 const storage = multer.diskStorage({
 	destination: function(req, file, cb) {
 		cb(null, './uploads/');
@@ -36,10 +38,10 @@ router.get('/', getAllProducts);
 
 router.get('/:id', getProductById);
 
-router.post('/', upload.single('productImage'), createProduct);
+router.post('/', checkAuth, upload.single('productImage'), createProduct);
 
-router.patch('/:id', updateProductById);
+router.patch('/:id', checkAuth, updateProductById);
 
-router.delete('/:id', deleteProductById);
+router.delete('/:id', checkAuth, deleteProductById);
 
 module.exports = router;
