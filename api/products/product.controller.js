@@ -41,19 +41,10 @@ module.exports.createProduct = async (req, res) => {
 module.exports.updateProductById = async (req, res) => {
 	try {
 		const id = req.params.id;
-		const updateOps = {};
-		console.log('updateOps', updateOps)
-
-		for (const ops of req.body) {
-			updateOps[ops.propName] = ops.value;
-		}
-
-
 		const updatedProduct = {
-			$set: updateOps
+			$set: req.body
 		};
-
-		const result = await product.update({ _id: id }, updatedProduct);
+		const result = await Product.update({ _id: id }, updatedProduct);
 		res.status(200).json(result);
 	} catch (error) {
 		res.status(500).json(error);
