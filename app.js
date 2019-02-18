@@ -8,6 +8,8 @@ const morgan = require('morgan');
 
 const bodyParser = require('body-parser');
 
+const mongoose = require('./db/mongoose');
+
 app.use(morgan('dev'));
 
 app.use('/uploads', express.static('uploads'));
@@ -26,9 +28,11 @@ app.use((req, res, next) => {
 
 const productsRoute = require('./api/products');
 const ordersRoute = require('./api/orders');
+const usersRoute = require('./api/users');
 
 app.use('/products', productsRoute);
 app.use('/orders', ordersRoute);
+app.use('/user', usersRoute);
 
 app.use((req, res, next) => {
 	const error = new Error('Not Found');
