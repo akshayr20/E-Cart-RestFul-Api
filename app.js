@@ -8,9 +8,10 @@ const morgan = require('morgan');
 
 const bodyParser = require('body-parser');
 
-const mongoose = require('./db/mongoose');
-
 app.use(morgan('dev'));
+
+app.use('/uploads', express.static('uploads'));
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use((req, res, next) => {

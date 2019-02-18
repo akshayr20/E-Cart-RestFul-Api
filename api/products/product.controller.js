@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 module.exports.getAllProducts = async (req, res) => {
 	try {
-		const products = await Product.find().select('name price _id');
+		const products = await Product.find().select('name price _id productImage');
 		if (!products.length) {
 			return res.status(404).json({ errorMessage: 'NO_PRODUCT_FOUND' });
 		}
@@ -14,6 +14,7 @@ module.exports.getAllProducts = async (req, res) => {
 					id: product._id,
 					name: product.name,
 					price: product.price,
+					productImage: product.productImage,
 					request: {
 						type: 'GET',
 						description: 'PRODUCT_INFO',
@@ -31,7 +32,7 @@ module.exports.getAllProducts = async (req, res) => {
 module.exports.getProductById = async (req, res) => {
 	try {
 		const id = req.params.id;
-		const product = await Product.findById(id).select('name price');
+		const product = await Product.findById(id).select('name price productImage');
 		if (!product) {
 			return res.status(404).json({ errorMessage: 'NO_PRODUCT_FOUND' });
 		}
@@ -39,6 +40,7 @@ module.exports.getProductById = async (req, res) => {
 			id: product._id,
 			name: product.name,
 			price: product.price,
+			productImage: product.productImage,
 			request: {
 				type: 'GET',
 				description: 'GET_ALL_PRODUCTS',
@@ -56,7 +58,8 @@ module.exports.createProduct = async (req, res) => {
 		const product = new Product({
 			_id: new mongoose.Types.ObjectId(),
 			name: req.body.name,
-			price: req.body.price
+			price: req.body.price,
+			productImage: req.file.path
 		});
 		const result = await product.save();
 		const response = {

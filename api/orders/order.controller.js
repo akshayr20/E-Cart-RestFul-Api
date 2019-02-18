@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 module.exports.getAllOrders = async (req, res) => {
 	try {
-        const orders = await Order.find().select('product quantity _id');
+        const orders = await Order.find().select('product quantity _id').populate('product', 'name');
         if (!orders.length) {
 			return res.status(404).json({ errorMessage: 'NO_ORDER_FOUND' });
 		}
@@ -18,7 +18,7 @@ module.exports.getAllOrders = async (req, res) => {
 					request: {
 						type: 'GET',
 						description: 'PRODUCT_INFO',
-						url: `http://localhost:3000/products/${order.product}`
+						url: `http://localhost:3000/products/${order.product._id}`
 					}
 				};
 			})
@@ -32,7 +32,7 @@ module.exports.getAllOrders = async (req, res) => {
 module.exports.getOrderById = async (req, res) => {
 	try {
 		const id = req.params.id;
-		const order = await Order.findById(id).select('product quantity _id');
+		const order = await Order.findById(id).select('product quantity _id').populate('product');
 		if (!order) {
 			return res.status(404).json({ errorMessage: 'NO_ORDER_FOUND' });
 		}
@@ -43,7 +43,7 @@ module.exports.getOrderById = async (req, res) => {
 			request: {
 				type: 'GET',
 				description: 'PRODUCT_INFO',
-				url: `http://localhost:3000/products/${order.product}`
+				url: `http://localhost:3000/products/${order.product._id}`
 			}
 		};
 		res.status(200).json(response);
