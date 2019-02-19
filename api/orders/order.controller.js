@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 module.exports.getAllOrders = async (req, res) => {
 	try {
-        const orders = await Order.find().select('product quantity _id').populate('product', 'name');
+        const orders = await Order.find().select('productId quantity _id').populate('product', 'name');
         if (!orders.length) {
 			return res.status(404).json({ errorMessage: 'NO_ORDER_FOUND' });
 		}
@@ -13,12 +13,12 @@ module.exports.getAllOrders = async (req, res) => {
 			orders: orders.map(order => {
 				return {
 					_id: order._id,
-					product: order.product,
+					productId: order.productId,
 					quantity: order.quantity,
 					request: {
 						type: 'GET',
 						description: 'PRODUCT_INFO',
-						url: `http://localhost:3000/products/${order.product._id}`
+						url: `http://localhost:3000/products/${order.productId}`
 					}
 				};
 			})
@@ -32,18 +32,19 @@ module.exports.getAllOrders = async (req, res) => {
 module.exports.getOrderById = async (req, res) => {
 	try {
 		const id = req.params.id;
-		const order = await Order.findById(id).select('product quantity _id').populate('product');
+		const order = await Order.findById(id).select('productId quantity _id');
+		console.log(order);
 		if (!order) {
 			return res.status(404).json({ errorMessage: 'NO_ORDER_FOUND' });
 		}
 		const response = {
 			_id: order._id,
-			product: order.product,
+			productId: order.productId,
 			quantity: order.quantity,
 			request: {
 				type: 'GET',
 				description: 'PRODUCT_INFO',
-				url: `http://localhost:3000/products/${order.product._id}`
+				url: `http://localhost:3000/products/${order.productId}`
 			}
 		};
 		res.status(200).json(response);
@@ -54,13 +55,13 @@ module.exports.getOrderById = async (req, res) => {
 
 module.exports.createOrder = async (req, res) => {
 	try {
-		const product = await Product.findById(req.body.product);
+		const product = await Product.findById(req.body.productId);
 		if (!product) {
 			return res.status(500).json({ errorMessage: 'PRODUCT_NOT_FOUND' });
 		}
 		const order = new Order({
 			_id: new mongoose.Types.ObjectId(),
-			product: req.body.product,
+			productId: req.body.productId,
 			quantity: req.body.quantity
 		});
 		const result = await order.save();
